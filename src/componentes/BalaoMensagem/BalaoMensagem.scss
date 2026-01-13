@@ -1,0 +1,128 @@
+@import '../../styles/variables';
+
+// ===========================================
+// BALÃO MENSAGEM - ESTILOS
+// ===========================================
+
+.balao-mensagem-container {
+  display: flex;
+  align-items: flex-end;
+  gap: $spacing-sm;
+  max-width: 85%;
+  
+  &.bot {
+    align-self: flex-start;
+  }
+  
+  &.usuario {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+  }
+}
+
+// Avatar
+.balao-mensagem__avatar {
+  @include flex-center;
+  width: 40px;
+  height: 40px;
+  border-radius: $border-radius-round;
+  background: linear-gradient(135deg, $color-secondary-light 0%, $color-secondary 100%);
+  box-shadow: $shadow-soft;
+  flex-shrink: 0;
+  
+  &--usuario {
+    background: linear-gradient(135deg, $color-primary-light 0%, $color-primary 100%);
+  }
+}
+
+.balao-mensagem__avatar-emoji {
+  font-size: $font-size-xl;
+}
+
+// Balão
+.balao-mensagem {
+  padding: $spacing-md $spacing-lg;
+  border-radius: $border-radius-large;
+  position: relative;
+  max-width: 100%;
+  word-wrap: break-word;
+  
+  &.balao-bot {
+    background: linear-gradient(135deg, $text-light 0%, rgba($text-light, 0.95) 100%);
+    border: 2px solid rgba($color-secondary, 0.2);
+    border-radius: $border-radius-large $border-radius-large $border-radius-large $border-radius-small;
+    box-shadow: $shadow-soft;
+    
+    // Seta do balão
+    &::before {
+      content: '';
+      position: absolute;
+      left: -10px;
+      bottom: 10px;
+      border: 8px solid transparent;
+      border-right-color: $text-light;
+    }
+  }
+  
+  &.balao-usuario {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+    color: $text-light;
+    border-radius: $border-radius-large $border-radius-large $border-radius-small $border-radius-large;
+    box-shadow: $shadow-soft;
+    
+    // Seta do balão
+    &::before {
+      content: '';
+      position: absolute;
+      right: -10px;
+      bottom: 10px;
+      border: 8px solid transparent;
+      border-left-color: $color-primary-dark;
+    }
+    
+    .balao-mensagem__hora {
+      color: rgba($text-light, 0.8);
+    }
+  }
+}
+
+.balao-mensagem__texto {
+  font-size: $font-size-base;
+  line-height: 1.5;
+  margin-bottom: $spacing-xs;
+  
+  @include responsive(sm) {
+    font-size: $font-size-sm;
+  }
+}
+
+.balao-mensagem__hora {
+  font-size: $font-size-xs;
+  color: $text-secondary;
+  display: block;
+  text-align: right;
+  opacity: 0.8;
+}
+
+// Animações de entrada
+@keyframes deslizarEsquerda {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes deslizarDireita {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

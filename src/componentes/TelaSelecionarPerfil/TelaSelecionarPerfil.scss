@@ -1,0 +1,364 @@
+// ===========================================
+// KIDIA - ESTILOS DA TELA DE SELEÇÃO DE PERFIL
+// ===========================================
+
+@import '../../styles/variables';
+
+.tela-selecionar-perfil {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+  background: linear-gradient(135deg, $cor-fundo-principal 0%, lighten($cor-fundo-principal, 5%) 100%);
+
+  &__container {
+    width: 100%;
+    max-width: 500px;
+    background: $cor-fundo-card;
+    border-radius: $borda-arredondada-grande;
+    padding: $spacing-xl;
+    box-shadow: $sombra-grande;
+    border: 3px solid $cor-borda;
+  }
+
+  &__cabecalho {
+    text-align: center;
+    margin-bottom: $spacing-xl;
+
+    .personagem-pixel {
+      margin: 0 auto $spacing-md;
+    }
+  }
+
+  &__titulo {
+    font-family: $fonte-titulo;
+    font-size: $fonte-tamanho-grande;
+    color: $cor-primaria;
+    margin-bottom: $spacing-sm;
+  }
+
+  &__subtitulo {
+    font-family: $fonte-texto;
+    font-size: $fonte-tamanho-normal;
+    color: $cor-texto-secundario;
+  }
+
+  &__lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: $spacing-md;
+  }
+
+  &__perfil-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-lg;
+    background: $cor-fundo-principal;
+    border: 3px solid $cor-borda;
+    border-radius: $borda-arredondada;
+    cursor: pointer;
+    transition: all $transicao-rapida;
+
+    &:hover {
+      border-color: $cor-primaria;
+      box-shadow: $sombra-media;
+    }
+  }
+
+  &__perfil-avatar {
+    font-size: 3rem;
+    margin-bottom: $spacing-sm;
+  }
+
+  &__perfil-nome {
+    font-family: $fonte-titulo;
+    font-size: $fonte-tamanho-medio;
+    color: $cor-texto-principal;
+    margin-bottom: $spacing-xs;
+  }
+
+  &__perfil-idade {
+    font-family: $fonte-texto;
+    font-size: $fonte-tamanho-pequeno;
+    color: $cor-texto-secundario;
+  }
+
+  &__adicionar-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-lg;
+    background: transparent;
+    border: 3px dashed $cor-borda;
+    border-radius: $borda-arredondada;
+    cursor: pointer;
+    transition: all $transicao-rapida;
+    min-height: 150px;
+
+    &:hover {
+      border-color: $cor-secundaria;
+      background: rgba($cor-secundaria, 0.05);
+    }
+  }
+
+  &__adicionar-icone {
+    font-size: 2.5rem;
+    color: $cor-secundaria;
+    margin-bottom: $spacing-sm;
+  }
+
+  &__adicionar-texto {
+    font-family: $fonte-texto;
+    font-size: $fonte-tamanho-pequeno;
+    color: $cor-texto-secundario;
+    text-align: center;
+  }
+
+  &__vazio {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-family: $fonte-texto;
+    font-size: $fonte-tamanho-normal;
+    color: $cor-texto-secundario;
+    padding: $spacing-lg;
+  }
+
+  // Formulário
+  &__formulario {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  &__form-titulo {
+    font-family: $fonte-titulo;
+    font-size: $fonte-tamanho-medio;
+    color: $cor-texto-principal;
+    text-align: center;
+    margin-bottom: $spacing-sm;
+  }
+
+  &__campo {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+
+  &__label {
+    font-family: $fonte-texto;
+    font-size: $fonte-tamanho-pequeno;
+    font-weight: 600;
+    color: $cor-texto-principal;
+  }
+
+  &__input {
+    padding: $spacing-md;
+    border: 2px solid $cor-borda;
+    border-radius: $borda-arredondada;
+    font-family: $fonte-texto;
+    font-size: $fonte-tamanho-normal;
+    background: $cor-fundo-principal;
+    color: $cor-texto-principal;
+    transition: all $transicao-rapida;
+
+    &:focus {
+      outline: none;
+      border-color: $cor-primaria;
+      box-shadow: 0 0 0 3px rgba($cor-primaria, 0.2);
+    }
+  }
+
+  &__slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: $cor-borda;
+    outline: none;
+    margin: $spacing-sm 0;
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: $cor-primaria;
+      cursor: pointer;
+      box-shadow: $sombra-pequena;
+    }
+
+    &::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: $cor-primaria;
+      cursor: pointer;
+      border: none;
+    }
+  }
+
+  &__slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: $fonte-texto;
+    font-size: $fonte-tamanho-muito-pequeno;
+    color: $cor-texto-secundario;
+  }
+
+  &__avatares {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    justify-content: center;
+  }
+
+  &__avatar-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+    border: 2px solid $cor-borda;
+    border-radius: 50%;
+    background: $cor-fundo-principal;
+    cursor: pointer;
+    transition: all $transicao-rapida;
+
+    &:hover {
+      border-color: $cor-secundaria;
+      transform: scale(1.1);
+    }
+
+    &.selecionado {
+      border-color: $cor-primaria;
+      border-width: 3px;
+      box-shadow: 0 0 0 3px rgba($cor-primaria, 0.3);
+    }
+  }
+
+  &__erro {
+    padding: $spacing-sm $spacing-md;
+    background: rgba($cor-erro, 0.1);
+    color: $cor-erro;
+    border: 1px solid rgba($cor-erro, 0.3);
+    border-radius: $borda-arredondada;
+    font-family: $fonte-texto;
+    font-size: $fonte-tamanho-pequeno;
+    text-align: center;
+  }
+
+  &__form-botoes {
+    display: flex;
+    gap: $spacing-md;
+    margin-top: $spacing-sm;
+  }
+
+  &__botao-cancelar {
+    flex: 1;
+    padding: $spacing-md;
+    background: transparent;
+    color: $cor-texto-secundario;
+    border: 2px solid $cor-borda;
+    border-radius: $borda-arredondada;
+    font-family: $fonte-texto;
+    font-size: $fonte-tamanho-normal;
+    cursor: pointer;
+    transition: all $transicao-rapida;
+
+    &:hover {
+      border-color: $cor-texto-secundario;
+      color: $cor-texto-principal;
+    }
+  }
+
+  &__botao-criar {
+    flex: 1;
+    padding: $spacing-md;
+    background: $gradiente-botao;
+    color: white;
+    border: none;
+    border-radius: $borda-arredondada;
+    font-family: $fonte-titulo;
+    font-size: $fonte-tamanho-normal;
+    cursor: pointer;
+    transition: all $transicao-rapida;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: $sombra-media;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__rodape {
+    margin-top: $spacing-xl;
+    text-align: center;
+    padding-top: $spacing-md;
+    border-top: 1px solid $cor-borda;
+  }
+
+  &__link-sair {
+    background: none;
+    border: none;
+    font-family: $fonte-texto;
+    font-size: $fonte-tamanho-pequeno;
+    color: $cor-texto-secundario;
+    cursor: pointer;
+    transition: color $transicao-rapida;
+
+    &:hover {
+      color: $cor-erro;
+      text-decoration: underline;
+    }
+  }
+}
+
+// Responsivo
+@include tablet {
+  .tela-selecionar-perfil {
+    padding: $spacing-md;
+
+    &__container {
+      padding: $spacing-lg;
+    }
+
+    &__lista {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+@include mobile {
+  .tela-selecionar-perfil {
+    padding: $spacing-sm;
+
+    &__container {
+      padding: $spacing-md;
+      border-radius: $borda-arredondada;
+    }
+
+    &__titulo {
+      font-size: $fonte-tamanho-medio;
+    }
+
+    &__lista {
+      grid-template-columns: repeat(2, 1fr);
+      gap: $spacing-sm;
+    }
+
+    &__perfil-card {
+      padding: $spacing-md;
+    }
+
+    &__perfil-avatar {
+      font-size: 2rem;
+    }
+  }
+}

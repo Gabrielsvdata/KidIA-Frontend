@@ -1,0 +1,351 @@
+@import '../../styles/variables';
+
+// ===========================================
+// PERSONAGEM PIXEL - ESTILOS (ROBÔ - KIKO)
+// ===========================================
+
+.pixel-wrapper {
+  display: inline-block;
+}
+
+.personagem-pixel {
+  position: relative;
+  image-rendering: pixelated;
+  
+  // Tamanhos
+  &.pixel-minusculo {
+    transform: scale(0.4);
+    transform-origin: center;
+  }
+  
+  &.pixel-pequeno {
+    transform: scale(0.6);
+    transform-origin: center;
+  }
+  
+  &.pixel-medio {
+    transform: scale(1);
+  }
+  
+  &.pixel-grande {
+    transform: scale(1.5);
+    transform-origin: center;
+    
+    @include responsive(sm) {
+      transform: scale(1.2);
+    }
+  }
+}
+
+// Personagem Robô
+.robo {
+  width: 80px;
+  height: 120px;
+  position: relative;
+  
+  // Antenas
+  .antena {
+    position: absolute;
+    width: 4px;
+    height: 20px;
+    background: $robot-body;
+    top: -15px;
+    
+    &.antena-esquerda {
+      left: 25px;
+      transform: rotate(-15deg);
+    }
+    
+    &.antena-direita {
+      right: 25px;
+      transform: rotate(15deg);
+    }
+    
+    .antena-bola {
+      position: absolute;
+      top: -8px;
+      left: -4px;
+      width: 12px;
+      height: 12px;
+      background: $robot-antenna;
+      border-radius: $border-radius-round;
+      box-shadow: 0 0 10px rgba($robot-antenna, 0.6);
+      animation: pulsarAntena 1.5s ease-in-out infinite;
+    }
+  }
+  
+  // Cabeça
+  .robo-cabeca {
+    width: 70px;
+    height: 55px;
+    background: linear-gradient(180deg, $robot-body-light 0%, $robot-body 100%);
+    border-radius: $border-radius-medium;
+    margin: 0 auto;
+    position: relative;
+    box-shadow: 
+      inset 0 -5px 0 rgba(0, 0, 0, 0.1),
+      inset 0 5px 0 rgba(255, 255, 255, 0.2),
+      4px 4px 0 rgba($robot-body, 0.3);
+    border: 3px solid darken($robot-body, 10%);
+    
+    // Reflexo
+    &::before {
+      content: '';
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      width: 15px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 4px;
+    }
+  }
+  
+  // Olhos
+  .olhos {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding-top: 10px;
+  }
+  
+  .olho {
+    width: 18px;
+    height: 18px;
+    background: $robot-eyes;
+    border-radius: $border-radius-round;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+    .pupila {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: $text-primary;
+      border-radius: $border-radius-round;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: olharLados 4s ease-in-out infinite;
+      
+      // Brilho do olho
+      &::after {
+        content: '';
+        position: absolute;
+        top: 1px;
+        right: 1px;
+        width: 3px;
+        height: 3px;
+        background: white;
+        border-radius: $border-radius-round;
+      }
+    }
+  }
+  
+  // Bochechas
+  .bochechas {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 8px;
+    margin-top: 5px;
+  }
+  
+  .bochecha {
+    width: 10px;
+    height: 6px;
+    background: $robot-cheeks;
+    border-radius: $border-radius-pill;
+    opacity: 0.8;
+  }
+  
+  // Boca
+  .boca {
+    width: 20px;
+    height: 8px;
+    background: darken($robot-body, 20%);
+    border-radius: 0 0 10px 10px;
+    margin: 5px auto 0;
+    position: relative;
+    
+    // Sorriso
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 12px;
+      height: 4px;
+      border-bottom: 2px solid lighten($robot-body, 30%);
+      border-radius: 0 0 6px 6px;
+    }
+  }
+  
+  // Corpo
+  .robo-corpo {
+    width: 60px;
+    height: 45px;
+    background: linear-gradient(180deg, $robot-body 0%, darken($robot-body, 10%) 100%);
+    border-radius: $border-radius-medium;
+    margin: 5px auto 0;
+    position: relative;
+    box-shadow: 
+      inset 0 -5px 0 rgba(0, 0, 0, 0.15),
+      4px 4px 0 rgba($robot-body, 0.3);
+    border: 3px solid darken($robot-body, 10%);
+  }
+  
+  .corpo-tela {
+    width: 35px;
+    height: 20px;
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: $border-radius-small;
+    margin: 8px auto 0;
+    @include flex-center;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+    
+    .icone-coracao {
+      font-size: 12px;
+      animation: baterCoracao 1s ease-in-out infinite;
+    }
+  }
+  
+  .corpo-botoes {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 5px;
+    
+    .corpo-botao {
+      width: 6px;
+      height: 6px;
+      border-radius: $border-radius-round;
+      
+      &.vermelho { background: $color-error; box-shadow: 0 0 4px $color-error; }
+      &.amarelo { background: $color-warning; box-shadow: 0 0 4px $color-warning; }
+      &.verde { background: $color-success; box-shadow: 0 0 4px $color-success; }
+    }
+  }
+  
+  // Braços
+  .bracos {
+    position: absolute;
+    width: 100%;
+    top: 65px;
+  }
+  
+  .braco {
+    position: absolute;
+    width: 12px;
+    height: 30px;
+    background: linear-gradient(180deg, $robot-body-light 0%, $robot-body 100%);
+    border-radius: $border-radius-small;
+    border: 2px solid darken($robot-body, 10%);
+    
+    &.braco-esquerdo {
+      left: -5px;
+      transform: rotate(15deg);
+      animation: acenarEsquerda 2s ease-in-out infinite;
+    }
+    
+    &.braco-direito {
+      right: -5px;
+      transform: rotate(-15deg);
+      animation: acenarDireita 2s ease-in-out infinite 0.5s;
+    }
+    
+    // Mãos
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 14px;
+      background: $robot-body-light;
+      border-radius: $border-radius-round;
+      border: 2px solid darken($robot-body, 10%);
+    }
+  }
+  
+  // Pernas
+  .pernas {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 5px;
+  }
+  
+  .perna {
+    width: 14px;
+    height: 20px;
+    background: linear-gradient(180deg, $robot-body 0%, darken($robot-body, 10%) 100%);
+    border-radius: 0 0 $border-radius-small $border-radius-small;
+    border: 2px solid darken($robot-body, 10%);
+    position: relative;
+    
+    // Pés
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: -2px;
+      width: 18px;
+      height: 8px;
+      background: darken($robot-body, 15%);
+      border-radius: $border-radius-small;
+    }
+  }
+}
+
+// Animações
+@keyframes pulsarAntena {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba($robot-antenna, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba($robot-antenna, 0.9);
+    transform: scale(1.1);
+  }
+}
+
+@keyframes olharLados {
+  0%, 100% {
+    transform: translate(-50%, -50%);
+  }
+  25% {
+    transform: translate(-30%, -50%);
+  }
+  75% {
+    transform: translate(-70%, -50%);
+  }
+}
+
+@keyframes baterCoracao {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes acenarEsquerda {
+  0%, 100% {
+    transform: rotate(15deg);
+  }
+  50% {
+    transform: rotate(25deg);
+  }
+}
+
+@keyframes acenarDireita {
+  0%, 100% {
+    transform: rotate(-15deg);
+  }
+  50% {
+    transform: rotate(-25deg);
+  }
+}

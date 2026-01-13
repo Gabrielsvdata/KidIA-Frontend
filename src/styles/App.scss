@@ -1,0 +1,71 @@
+@import './variables';
+
+// ===========================================
+// KIDIA - APP CONTAINER STYLES
+// ===========================================
+
+.app {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background: $bg-gradient;
+  
+  // Container principal para as telas
+  > div {
+    min-height: 100vh;
+    width: 100%;
+  }
+
+  // Estado de carregamento
+  &--carregando {
+    @include flex-center;
+  }
+
+  &__loading {
+    @include flex-column;
+    @include flex-center;
+    gap: $spacing-md;
+    
+    &-emoji {
+      font-size: 4rem;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    p {
+      font-size: $font-size-lg;
+      color: $text-secondary;
+      font-weight: $font-weight-semibold;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+}
+
+// Padrão de fundo com estrelas/pontos
+.app::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba($color-primary, 0.1) 2px, transparent 2px),
+    radial-gradient(circle at 80% 20%, rgba($color-secondary, 0.1) 2px, transparent 2px),
+    radial-gradient(circle at 40% 70%, rgba($color-accent, 0.1) 2px, transparent 2px),
+    radial-gradient(circle at 90% 80%, rgba($color-primary, 0.1) 2px, transparent 2px),
+    radial-gradient(circle at 10% 90%, rgba($color-secondary, 0.1) 2px, 2px);
+  background-size: 100px 100px;
+  pointer-events: none;
+  z-index: $z-background;
+}

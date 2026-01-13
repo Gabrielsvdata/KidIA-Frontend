@@ -1,0 +1,97 @@
+@import '../../styles/variables';
+
+// ===========================================
+// RESPOSTAS RÁPIDAS - ESTILOS
+// ===========================================
+
+.respostas-rapidas {
+  padding: $spacing-md 0;
+  margin-top: auto;
+}
+
+.respostas-rapidas__label {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+  margin-bottom: $spacing-md;
+  font-weight: $font-weight-semibold;
+  @include flex-center;
+  gap: $spacing-xs;
+  justify-content: flex-start;
+}
+
+.respostas-rapidas__lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.respostas-rapidas__botao {
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  background: linear-gradient(135deg, $text-light 0%, rgba($text-light, 0.95) 100%);
+  border: 2px solid rgba($color-secondary, 0.3);
+  border-radius: $border-radius-pill;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $text-primary;
+  box-shadow: $shadow-soft;
+  transition: all $transition-fast;
+  cursor: pointer;
+  
+  &:hover {
+    border-color: $color-secondary;
+    background: linear-gradient(135deg, rgba($color-secondary, 0.1) 0%, rgba($color-secondary, 0.05) 100%);
+    box-shadow: $shadow-medium;
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.respostas-rapidas__icone {
+  font-size: $font-size-lg;
+}
+
+.respostas-rapidas__texto {
+  white-space: nowrap;
+  
+  @include responsive(sm) {
+    white-space: normal;
+  }
+}
+
+// Versão mobile - scroll horizontal
+@include responsive(sm) {
+  .respostas-rapidas__lista {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: $spacing-sm;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  
+  .respostas-rapidas__botao {
+    flex-shrink: 0;
+  }
+}
+
+// Animação de destaque
+@keyframes destacar {
+  0%, 100% {
+    box-shadow: $shadow-soft;
+  }
+  50% {
+    box-shadow: $shadow-medium, 0 0 10px rgba($color-secondary, 0.3);
+  }
+}
+
+.respostas-rapidas__botao:first-child {
+  animation: destacar 2s ease-in-out infinite;
+  animation-delay: 1s;
+}

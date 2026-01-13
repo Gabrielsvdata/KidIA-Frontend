@@ -1,0 +1,214 @@
+// ===========================================
+// KIDIA - ESTILOS DA TELA DE AUTENTICAÇÃO
+// ===========================================
+
+@import '../../styles/variables';
+
+.tela-autenticacao {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+  background: linear-gradient(135deg, $cor-fundo-principal 0%, lighten($cor-fundo-principal, 5%) 100%);
+
+  &__container {
+    width: 100%;
+    max-width: 420px;
+    background: $cor-fundo-card;
+    border-radius: $borda-arredondada-grande;
+    padding: $spacing-xl;
+    box-shadow: $sombra-grande;
+    border: 3px solid $cor-borda;
+  }
+
+  &__cabecalho {
+    text-align: center;
+    margin-bottom: $spacing-xl;
+
+    .personagem-pixel {
+      margin: 0 auto $spacing-md;
+    }
+  }
+
+  &__titulo {
+    font-family: $fonte-titulo;
+    font-size: $fonte-tamanho-grande;
+    color: $cor-primaria;
+    margin-bottom: $spacing-sm;
+  }
+
+  &__subtitulo {
+    font-family: $fonte-texto;
+    font-size: $fonte-tamanho-normal;
+    color: $cor-texto-secundario;
+  }
+
+  &__formulario {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  &__campo {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+    overflow: hidden;
+  }
+
+  &__label {
+    font-family: $fonte-texto;
+    font-size: $fonte-tamanho-pequeno;
+    font-weight: 600;
+    color: $cor-texto-principal;
+  }
+
+  &__input {
+    padding: $spacing-md;
+    border: 2px solid $cor-borda;
+    border-radius: $borda-arredondada;
+    font-family: $fonte-texto;
+    font-size: $fonte-tamanho-normal;
+    background: $cor-fundo-principal;
+    color: $cor-texto-principal;
+    transition: all $transicao-rapida;
+
+    &:focus {
+      outline: none;
+      border-color: $cor-primaria;
+      box-shadow: 0 0 0 3px rgba($cor-primaria, 0.2);
+    }
+
+    &::placeholder {
+      color: $cor-texto-secundario;
+    }
+  }
+
+  &__mensagem {
+    padding: $spacing-sm $spacing-md;
+    border-radius: $borda-arredondada;
+    font-family: $fonte-texto;
+    font-size: $fonte-tamanho-pequeno;
+    text-align: center;
+
+    &--erro {
+      background: rgba($cor-erro, 0.1);
+      color: $cor-erro;
+      border: 1px solid rgba($cor-erro, 0.3);
+    }
+
+    &--sucesso {
+      background: rgba($cor-sucesso, 0.1);
+      color: $cor-sucesso;
+      border: 1px solid rgba($cor-sucesso, 0.3);
+    }
+  }
+
+  &__dicas {
+    font-family: $fonte-texto;
+    font-size: $fonte-tamanho-muito-pequeno;
+    color: $cor-texto-secundario;
+    background: rgba($cor-primaria, 0.05);
+    padding: $spacing-sm $spacing-md;
+    border-radius: $borda-arredondada;
+    border-left: 3px solid $cor-primaria;
+
+    p {
+      margin-bottom: $spacing-xs;
+      font-weight: 600;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: $spacing-md;
+
+      li {
+        margin-bottom: 2px;
+      }
+    }
+  }
+
+  &__botao-principal {
+    padding: $spacing-md $spacing-lg;
+    background: $gradiente-botao;
+    color: white;
+    border: none;
+    border-radius: $borda-arredondada;
+    font-family: $fonte-titulo;
+    font-size: $fonte-tamanho-medio;
+    cursor: pointer;
+    transition: all $transicao-rapida;
+    box-shadow: $sombra-media;
+    margin-top: $spacing-sm;
+
+    &:hover:not(:disabled) {
+      box-shadow: $sombra-grande;
+      transform: translateY(-2px);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-sm;
+    margin-top: $spacing-lg;
+  }
+
+  &__link {
+    background: none;
+    border: none;
+    font-family: $fonte-texto;
+    font-size: $fonte-tamanho-pequeno;
+    color: $cor-primaria;
+    cursor: pointer;
+    transition: color $transicao-rapida;
+    padding: $spacing-xs;
+
+    &:hover {
+      color: darken($cor-primaria, 10%);
+      text-decoration: underline;
+    }
+
+    &--pular {
+      color: $cor-texto-secundario;
+      font-size: $fonte-tamanho-muito-pequeno;
+
+      &:hover {
+        color: $cor-texto-principal;
+      }
+    }
+  }
+}
+
+// Responsivo
+@include tablet {
+  .tela-autenticacao {
+    padding: $spacing-md;
+
+    &__container {
+      padding: $spacing-lg;
+    }
+  }
+}
+
+@include mobile {
+  .tela-autenticacao {
+    padding: $spacing-sm;
+
+    &__container {
+      padding: $spacing-md;
+      border-radius: $borda-arredondada;
+    }
+
+    &__titulo {
+      font-size: $fonte-tamanho-medio;
+    }
+  }
+}

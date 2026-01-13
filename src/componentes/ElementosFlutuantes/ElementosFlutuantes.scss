@@ -1,0 +1,113 @@
+@import '../../styles/variables';
+
+// ===========================================
+// ELEMENTOS FLUTUANTES - ESTILOS
+// ===========================================
+
+.elementos-flutuantes {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: $z-background;
+  overflow: hidden;
+}
+
+.elementos-flutuantes__elemento {
+  position: absolute;
+  font-size: $font-size-2xl;
+  opacity: 0.5;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  
+  // Posições diferentes para cada elemento
+  &.el-0 {
+    top: 10%;
+    left: 5%;
+    font-size: $font-size-3xl;
+  }
+  
+  &.el-1 {
+    top: 15%;
+    right: 10%;
+    font-size: $font-size-2xl;
+  }
+  
+  &.el-2 {
+    top: 40%;
+    left: 8%;
+    font-size: $font-size-xl;
+  }
+  
+  &.el-3 {
+    top: 30%;
+    right: 5%;
+    font-size: $font-size-2xl;
+  }
+  
+  &.el-4 {
+    bottom: 30%;
+    left: 12%;
+    font-size: $font-size-3xl;
+  }
+  
+  &.el-5 {
+    bottom: 20%;
+    right: 15%;
+    font-size: $font-size-xl;
+  }
+  
+  &.el-6 {
+    top: 60%;
+    left: 3%;
+    font-size: $font-size-2xl;
+  }
+  
+  &.el-7 {
+    bottom: 40%;
+    right: 8%;
+    font-size: $font-size-xl;
+  }
+}
+
+// Responsivo - esconde alguns elementos em telas menores
+@include responsive(md) {
+  .elementos-flutuantes__elemento {
+    font-size: $font-size-lg !important;
+    
+    &.el-2,
+    &.el-5,
+    &.el-7 {
+      display: none;
+    }
+  }
+}
+
+@include responsive(sm) {
+  .elementos-flutuantes__elemento {
+    font-size: $font-size-base !important;
+    opacity: 0.3;
+    
+    &.el-1,
+    &.el-3,
+    &.el-4,
+    &.el-6 {
+      display: none;
+    }
+  }
+}
+
+// Efeito de brilho adicional
+@keyframes brilhar {
+  0%, 100% {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+  50% {
+    filter: drop-shadow(0 2px 8px rgba($color-primary, 0.4));
+  }
+}
+
+.elementos-flutuantes__elemento:nth-child(odd) {
+  animation: brilhar 3s ease-in-out infinite;
+}

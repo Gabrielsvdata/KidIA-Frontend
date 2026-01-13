@@ -1,0 +1,350 @@
+@import '../../styles/variables';
+
+// ===========================================
+// TELA INICIAL - ESTILOS
+// ===========================================
+
+.tela-inicial {
+  min-height: 100vh;
+  width: 100%;
+  @include flex-center;
+  padding: $spacing-lg;
+  position: relative;
+
+  &__conteudo {
+    @include flex-column;
+    align-items: center;
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+    gap: $spacing-xl;
+  }
+}
+
+// Logo
+.tela-inicial__logo {
+  @include flex-column;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.tela-inicial__logo-texto {
+  font-size: $font-size-4xl;
+  font-weight: $font-weight-extrabold;
+  letter-spacing: -2px;
+  text-shadow: 4px 4px 0 rgba($color-secondary, 0.2);
+  
+  @include responsive(sm) {
+    font-size: $font-size-3xl;
+  }
+}
+
+.tela-inicial__logo-kid {
+  color: $color-primary;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: rgba($color-primary, 0.3);
+    border-radius: $border-radius-pill;
+    z-index: -1;
+  }
+}
+
+.tela-inicial__logo-ia {
+  color: $color-secondary;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: rgba($color-secondary, 0.3);
+    border-radius: $border-radius-pill;
+    z-index: -1;
+  }
+}
+
+.tela-inicial__logo-subtitulo {
+  font-size: $font-size-lg;
+  color: $text-secondary;
+  font-weight: $font-weight-semibold;
+}
+
+// Personagem
+.tela-inicial__personagem {
+  padding: $spacing-lg;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba($color-primary, 0.2) 0%, transparent 70%);
+    border-radius: $border-radius-round;
+    z-index: -1;
+  }
+}
+
+// Mensagem
+.tela-inicial__mensagem {
+  @include flex-column;
+  gap: $spacing-sm;
+}
+
+.tela-inicial__texto {
+  font-size: $font-size-lg;
+  color: $text-primary;
+  line-height: 1.6;
+  
+  strong {
+    color: $color-secondary;
+  }
+  
+  @include responsive(sm) {
+    font-size: $font-size-base;
+  }
+}
+
+// Botões container
+.tela-inicial__botoes {
+  @include flex-column;
+  align-items: center;
+  gap: $spacing-md;
+  width: 100%;
+}
+
+// Botão Iniciar
+.tela-inicial__botao-iniciar {
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-2xl;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  color: $text-light;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  border-radius: $border-radius-pill;
+  box-shadow: $shadow-medium, 0 4px 0 darken($color-primary-dark, 10%);
+  transition: all $transition-fast;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+  }
+  
+  &:hover::before {
+    left: 100%;
+  }
+  
+  .tela-inicial__botao-icone {
+    font-size: $font-size-xl;
+  }
+  
+  @include responsive(sm) {
+    padding: $spacing-md $spacing-xl;
+    font-size: $font-size-lg;
+  }
+}
+
+// Botão Login (Área do Responsável)
+.tela-inicial__botao-login {
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-xl;
+  background: transparent;
+  color: $text-secondary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  border: 2px solid rgba($text-secondary, 0.3);
+  border-radius: $border-radius-pill;
+  transition: all $transition-fast;
+  
+  &:hover {
+    border-color: $color-secondary;
+    color: $color-secondary;
+    background: rgba($color-secondary, 0.05);
+  }
+  
+  .tela-inicial__botao-icone {
+    font-size: $font-size-lg;
+  }
+}
+
+// Modo convidado
+.tela-inicial__modo-convidado {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+  background: rgba($text-secondary, 0.1);
+  padding: $spacing-xs $spacing-md;
+  border-radius: $border-radius-pill;
+}
+
+// Botão Voltar
+.tela-inicial__botao-voltar {
+  background: none;
+  border: none;
+  color: $text-secondary;
+  font-size: $font-size-base;
+  cursor: pointer;
+  transition: color $transition-fast;
+  
+  &:hover {
+    color: $color-primary;
+  }
+}
+
+// Formulário
+.tela-inicial__formulario {
+  @include flex-column;
+  align-items: center;
+  gap: $spacing-lg;
+  width: 100%;
+}
+
+.tela-inicial__label {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $text-primary;
+  @include flex-center;
+  gap: $spacing-sm;
+  
+  .tela-inicial__label-icone {
+    font-size: $font-size-2xl;
+  }
+}
+
+.tela-inicial__input-container {
+  @include flex-center;
+  gap: $spacing-md;
+  width: 100%;
+  flex-wrap: wrap;
+  
+  @include responsive(sm) {
+    flex-direction: column;
+  }
+}
+
+.tela-inicial__input {
+  flex: 1;
+  min-width: 200px;
+  padding: $spacing-md $spacing-lg;
+  font-size: $font-size-lg;
+  border: 3px solid rgba($color-secondary, 0.3);
+  border-radius: $border-radius-pill;
+  background: $text-light;
+  color: $text-primary;
+  text-align: center;
+  transition: all $transition-fast;
+  
+  &::placeholder {
+    color: rgba($text-secondary, 0.6);
+  }
+  
+  &:focus {
+    border-color: $color-secondary;
+    box-shadow: $shadow-soft, 0 0 0 4px rgba($color-secondary, 0.1);
+  }
+  
+  @include responsive(sm) {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+.tela-inicial__botao-entrar {
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-xl;
+  background: linear-gradient(135deg, $color-secondary 0%, $color-secondary-dark 100%);
+  color: $text-light;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  border-radius: $border-radius-pill;
+  box-shadow: $shadow-medium;
+  transition: all $transition-fast;
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+  
+  .tela-inicial__botao-seta {
+    font-size: $font-size-xl;
+    transition: transform $transition-fast;
+  }
+  
+  &:hover:not(:disabled) .tela-inicial__botao-seta {
+    transform: translateX(5px);
+  }
+  
+  @include responsive(sm) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+// Decoração
+.tela-inicial__decoracao {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: $z-background;
+  
+  span {
+    position: absolute;
+    font-size: $font-size-2xl;
+    opacity: 0.6;
+  }
+  
+  .tela-inicial__deco-estrela {
+    top: 15%;
+    left: 10%;
+    animation: flutuar 4s ease-in-out infinite;
+  }
+  
+  .tela-inicial__deco-coracao {
+    top: 20%;
+    right: 15%;
+    animation: flutuar 5s ease-in-out infinite 0.5s;
+  }
+  
+  .tela-inicial__deco-brilho {
+    bottom: 25%;
+    left: 15%;
+    animation: flutuar 3.5s ease-in-out infinite 1s;
+  }
+}
+
+// Animação flutuante
+@keyframes flutuar {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(10deg);
+  }
+}

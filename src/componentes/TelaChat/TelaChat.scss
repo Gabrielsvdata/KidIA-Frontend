@@ -1,0 +1,230 @@
+@import '../../styles/variables';
+
+// ===========================================
+// TELA CHAT - ESTILOS
+// ===========================================
+
+.tela-chat {
+  min-height: 100vh;
+  width: 100%;
+  @include flex-column;
+  background: $bg-gradient;
+  position: relative;
+}
+
+// Cabeçalho
+.tela-chat__cabecalho {
+  @include flex-between;
+  padding: $spacing-md $spacing-lg;
+  background: linear-gradient(135deg, rgba($text-light, 0.95) 0%, rgba($text-light, 0.9) 100%);
+  backdrop-filter: blur(10px);
+  box-shadow: $shadow-soft;
+  position: sticky;
+  top: 0;
+  z-index: $z-sticky;
+  border-bottom: 3px solid rgba($color-primary, 0.2);
+}
+
+.tela-chat__botao-voltar {
+  @include flex-center;
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  border-radius: $border-radius-round;
+  box-shadow: $shadow-soft;
+  
+  .tela-chat__seta-voltar {
+    color: $text-light;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+  }
+}
+
+.tela-chat__cabecalho-personagem {
+  margin-left: $spacing-md;
+}
+
+.tela-chat__cabecalho-info {
+  flex: 1;
+  margin-left: $spacing-md;
+  @include flex-column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.tela-chat__cabecalho-titulo {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $text-primary;
+}
+
+.tela-chat__cabecalho-status {
+  @include flex-center;
+  gap: $spacing-xs;
+  font-size: $font-size-sm;
+  color: $color-success;
+}
+
+.tela-chat__status-ponto {
+  width: 8px;
+  height: 8px;
+  background: $color-success;
+  border-radius: $border-radius-round;
+  animation: pulsar 2s ease-in-out infinite;
+  
+  &.offline {
+    background: $color-warning;
+  }
+}
+
+.tela-chat__cabecalho-decoracao {
+  font-size: $font-size-2xl;
+  animation: flutuar 3s ease-in-out infinite;
+}
+
+// Container de Mensagens
+.tela-chat__mensagens-container {
+  flex: 1;
+  @include flex-column;
+  padding: $spacing-md;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.tela-chat__mensagens-lista {
+  @include flex-column;
+  gap: $spacing-md;
+  padding-bottom: $spacing-lg;
+}
+
+// Indicador de Digitando
+.tela-chat__indicador-digitando {
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background: rgba($text-light, 0.8);
+  border-radius: $border-radius-large;
+  align-self: flex-start;
+  box-shadow: $shadow-soft;
+}
+
+.tela-chat__pontos-digitando {
+  @include flex-center;
+  gap: 4px;
+  
+  span {
+    width: 8px;
+    height: 8px;
+    background: $color-secondary;
+    border-radius: $border-radius-round;
+    animation: pularDigitando 1.4s ease-in-out infinite;
+    
+    &:nth-child(1) { animation-delay: 0s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.4s; }
+  }
+}
+
+@keyframes pularDigitando {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-8px);
+  }
+}
+
+.tela-chat__texto-digitando {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+  font-style: italic;
+}
+
+// Área de Input
+.tela-chat__area-input {
+  padding: $spacing-md $spacing-lg;
+  background: linear-gradient(180deg, transparent 0%, rgba($text-light, 0.95) 20%);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  bottom: 0;
+  
+  @include flex-column;
+  gap: $spacing-sm;
+}
+
+.tela-chat__input-container {
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-sm;
+  background: $text-light;
+  border: 3px solid rgba($color-secondary, 0.3);
+  border-radius: $border-radius-pill;
+  box-shadow: $shadow-soft;
+  transition: all $transition-fast;
+  
+  &:focus-within {
+    border-color: $color-secondary;
+    box-shadow: $shadow-medium, 0 0 0 4px rgba($color-secondary, 0.1);
+  }
+}
+
+.tela-chat__input-mensagem {
+  flex: 1;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-base;
+  color: $text-primary;
+  background: transparent;
+  
+  &::placeholder {
+    color: rgba($text-secondary, 0.6);
+  }
+}
+
+.tela-chat__botao-enviar {
+  @include flex-center;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, $color-secondary 0%, $color-secondary-dark 100%);
+  border-radius: $border-radius-round;
+  box-shadow: $shadow-soft;
+  transition: all $transition-fast;
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+  
+  .tela-chat__icone-enviar {
+    font-size: $font-size-xl;
+  }
+}
+
+.tela-chat__nota-seguranca {
+  text-align: center;
+  font-size: $font-size-xs;
+  color: $text-secondary;
+  @include flex-center;
+  gap: $spacing-xs;
+}
+
+// Animações
+@keyframes flutuar {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes pulsar {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}

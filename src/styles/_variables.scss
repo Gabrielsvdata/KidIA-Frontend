@@ -1,0 +1,204 @@
+// ===========================================
+// KIDIA - VARIÁVEIS GLOBAIS SASS
+// ===========================================
+
+// Cores Principais
+$color-primary: #FF6B9D;
+$color-primary-light: #FF8FB3;
+$color-primary-dark: #E5527F;
+
+$color-secondary: #7C4DFF;
+$color-secondary-light: #B388FF;
+$color-secondary-dark: #651FFF;
+
+$color-accent: #00E5FF;
+$color-accent-light: #6EFFFF;
+$color-accent-dark: #00B8D4;
+
+// Cores de Fundo
+$bg-primary: #FFF5F8;
+$bg-secondary: #F0E6FF;
+$bg-gradient: linear-gradient(135deg, #FFF5F8 0%, #F0E6FF 50%, #E6F9FF 100%);
+
+// Cores de Texto
+$text-primary: #4A3B5C;
+$text-secondary: #7B6B8A;
+$text-light: #FFFFFF;
+
+// Cores de Status
+$color-success: #4CAF50;
+$color-warning: #FFC107;
+$color-error: #F44336;
+$color-info: #2196F3;
+
+// Cores do Robô (Pixel Art)
+$robot-body: #7C4DFF;
+$robot-body-light: #B388FF;
+$robot-eyes: #FFFFFF;
+$robot-cheeks: #FF8FB3;
+$robot-antenna: #FFD700;
+
+// Sombras
+$shadow-soft: 0 4px 15px rgba(124, 77, 255, 0.15);
+$shadow-medium: 0 8px 25px rgba(124, 77, 255, 0.2);
+$shadow-strong: 0 12px 35px rgba(124, 77, 255, 0.25);
+$shadow-glow: 0 0 20px rgba(255, 107, 157, 0.4);
+
+// Bordas
+$border-radius-small: 8px;
+$border-radius-medium: 16px;
+$border-radius-large: 24px;
+$border-radius-round: 50%;
+$border-radius-pill: 50px;
+
+// Tipografia
+$font-family: 'Nunito', sans-serif;
+$font-size-xs: 0.75rem;
+$font-size-sm: 0.875rem;
+$font-size-base: 1rem;
+$font-size-lg: 1.25rem;
+$font-size-xl: 1.5rem;
+$font-size-2xl: 2rem;
+$font-size-3xl: 2.5rem;
+$font-size-4xl: 3rem;
+
+$font-weight-normal: 400;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-extrabold: 800;
+
+// Espaçamentos
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-2xl: 48px;
+$spacing-3xl: 64px;
+
+// Breakpoints
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+
+// Transições
+$transition-fast: 0.15s ease;
+$transition-normal: 0.3s ease;
+$transition-slow: 0.5s ease;
+
+// Z-index
+$z-background: -1;
+$z-default: 1;
+$z-dropdown: 100;
+$z-sticky: 200;
+$z-modal: 300;
+$z-tooltip: 400;
+$z-overlay: 500;
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin pixel-border($color: $color-primary) {
+  border: 4px solid $color;
+  border-radius: $border-radius-medium;
+  box-shadow: 
+    4px 4px 0 rgba($color, 0.3),
+    inset 2px 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+@mixin button-bounce {
+  transition: transform $transition-fast;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+@mixin gradient-text($gradient) {
+  background: $gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@mixin responsive($breakpoint) {
+  @if $breakpoint == sm {
+    @media (max-width: $breakpoint-sm) { @content; }
+  } @else if $breakpoint == md {
+    @media (max-width: $breakpoint-md) { @content; }
+  } @else if $breakpoint == lg {
+    @media (max-width: $breakpoint-lg) { @content; }
+  } @else if $breakpoint == xl {
+    @media (max-width: $breakpoint-xl) { @content; }
+  }
+}
+
+// ===========================================
+// ALIASES PARA COMPATIBILIDADE
+// ===========================================
+
+// Cores (aliases)
+$cor-primaria: $color-primary;
+$cor-secundaria: $color-secondary;
+$cor-fundo-principal: $bg-primary;
+$cor-fundo-card: #FFFFFF;
+$cor-texto-principal: $text-primary;
+$cor-texto-secundario: $text-secondary;
+$cor-borda: #E0D4E8;
+$cor-sucesso: $color-success;
+$cor-erro: $color-error;
+
+// Tipografia (aliases)
+$fonte-titulo: $font-family;
+$fonte-texto: $font-family;
+$fonte-tamanho-muito-pequeno: $font-size-xs;
+$fonte-tamanho-pequeno: $font-size-sm;
+$fonte-tamanho-normal: $font-size-base;
+$fonte-tamanho-medio: $font-size-lg;
+$fonte-tamanho-grande: $font-size-xl;
+
+// Espaçamento (aliases já existem)
+
+// Bordas (aliases)
+$borda-arredondada: $border-radius-medium;
+$borda-arredondada-grande: $border-radius-large;
+
+// Sombras (aliases)
+$sombra-pequena: $shadow-soft;
+$sombra-media: $shadow-medium;
+$sombra-grande: $shadow-strong;
+
+// Transições (aliases)
+$transicao-rapida: $transition-fast;
+
+// Gradientes
+$gradiente-botao: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%);
+
+// Media queries mixins (aliases)
+@mixin tablet {
+  @media (max-width: $breakpoint-md) { @content; }
+}
+
+@mixin mobile {
+  @media (max-width: $breakpoint-sm) { @content; }
+}
