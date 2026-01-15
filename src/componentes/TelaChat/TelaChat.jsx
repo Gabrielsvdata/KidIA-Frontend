@@ -4,10 +4,11 @@ import PersonagemPixel from '../PersonagemPixel/PersonagemPixel';
 import BalaoMensagem from '../BalaoMensagem/BalaoMensagem';
 import RespostasRapidas from '../RespostasRapidas/RespostasRapidas';
 import chatService from '../../servicos/chat';
-import { estaAutenticado } from '../../servicos/api';
+import { useAutenticacao } from '../../contextos/AutenticacaoContexto';
 import './TelaChat.scss';
 
 const TelaChat = ({ nomeUsuario, aoVoltar }) => {
+  const { autenticado } = useAutenticacao();
   const [mensagens, setMensagens] = useState([]);
   const [textoInput, setTextoInput] = useState('');
   const [estaDigitando, setEstaDigitando] = useState(false);
@@ -106,7 +107,7 @@ const TelaChat = ({ nomeUsuario, aoVoltar }) => {
       const resultado = await chatService.enviar(
         texto.trim(),
         historico,
-        estaAutenticado()
+        autenticado
       );
 
       const respostaBot = {

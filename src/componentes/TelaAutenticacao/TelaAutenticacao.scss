@@ -151,6 +151,16 @@
       opacity: 0.6;
       cursor: not-allowed;
     }
+
+    &--bloqueado {
+      background: linear-gradient(135deg, $cor-erro 0%, darken($cor-erro, 10%) 100%);
+      animation: pulse-blocked 1.5s infinite;
+    }
+  }
+
+  @keyframes pulse-blocked {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 0.8; }
   }
 
   &__links {

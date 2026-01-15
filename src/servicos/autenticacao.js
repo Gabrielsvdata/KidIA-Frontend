@@ -1,13 +1,13 @@
 // ===========================================
-// KIDIA - SERVIÇO DE AUTENTICAÇÃO
+// KIDIA - SERVIÇO DE AUTENTICAÇÃO (COOKIES httpOnly)
 // ===========================================
 
 import {
   apiRequest,
-  saveTokens,
-  clearTokens,
   saveUser,
   getUser,
+  clearLocalData,
+  verificarAutenticacao,
 } from './api';
 
 /**
@@ -73,6 +73,7 @@ const autenticacaoService = {
 
   /**
    * Fazer login
+   * Os tokens JWT são setados automaticamente via cookies httpOnly
    */
   async login(email, senha) {
     if (!email || !senha) {
@@ -87,8 +88,8 @@ const autenticacaoService = {
       },
     });
 
-    if (data.success) {
-      saveTokens(data.access_token, data.refresh_token);
+    if (data.success && data.user) {
+      // Salva apenas dados não-sensíveis do usuário
       saveUser(data.user);
     }
 
@@ -97,45 +98,56 @@ const autenticacaoService = {
 
   /**
    * Fazer logout
+   * Chama o backend para limpar os cookies httpOnly
    */
-  logout() {
-    clearTokens();
-  },
-
-  /**
-   * Obter dados do usuário logado
-   */
-  async obterUsuarioAtual() {
+  async logout() {
     try {
-      const data = await apiRequest('/auth/me', {
-        method: 'GET',
+      await apiRequest('/auth/logout', {
+        method: 'POST',
         authenticated: true,
       });
-      
-      if (data.success) {
-        saveUser(data.user);
-      }
-      
-      return data.user;
     } catch (error) {
-      // Se falhar, tenta usar dados em cache
-      const cachedUser = getUser();
-      if (cachedUser) {
-        return cachedUser;
+      // Mesmo se falhar no backend, limpa dados locais
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Erro ao fazer logout no servidor:', error);
       }
-      throw error;
+    } finally {
+      // Sempre limpa dados locais
+      clearLocalData();
     }
   },
 
   /**
-   * Verificar se está logado
+   * Obter dados do usuário logado
+   * Consulta o backend para validar a sessão
    */
-  estaLogado() {
-    return !!getUser();
+  async obterUsuarioAtual() {
+    const user = await verificarAutenticacao();
+    
+    if (user) {
+      saveUser(user);
+      return user;
+    }
+    
+    // Se não conseguiu do backend, tenta cache local
+    const cachedUser = getUser();
+    if (cachedUser) {
+      return cachedUser;
+    }
+    
+    throw new Error('Usuário não autenticado');
   },
 
   /**
-   * Obter usuário do cache
+   * Verificar se está logado (consulta backend)
+   */
+  async estaLogado() {
+    const user = await verificarAutenticacao();
+    return !!user;
+  },
+
+  /**
+   * Obter usuário do cache local (não valida sessão)
    */
   obterUsuarioCache() {
     return getUser();

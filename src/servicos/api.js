@@ -1,58 +1,81 @@
 // ===========================================
-// KIDIA - CONFIGURAÇÃO BASE DA API
+// KIDIA - CONFIGURAÇÃO BASE DA API (COOKIES httpOnly)
 // ===========================================
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://kidia-backend.onrender.com';
 
-// Chaves para localStorage
+// Chaves para localStorage (apenas dados não-sensíveis)
 const STORAGE_KEYS = {
-  ACCESS_TOKEN: 'kidia_access_token',
-  REFRESH_TOKEN: 'kidia_refresh_token',
   USER: 'kidia_user',
   SELECTED_CHILD: 'kidia_selected_child',
 };
 
-/**
- * Obtém o token de acesso do localStorage
- */
-const getAccessToken = () => localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+// ===========================================
+// GERENCIAMENTO DE CSRF
+// ===========================================
 
 /**
- * Obtém o refresh token do localStorage
+ * Obtém o token CSRF do cookie
  */
-const getRefreshToken = () => localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
-
-/**
- * Salva os tokens no localStorage
- */
-const saveTokens = (accessToken, refreshToken) => {
-  if (accessToken) localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-  if (refreshToken) localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+const getCsrfToken = () => {
+  const match = document.cookie.match(/csrf_token=([^;]+)/);
+  return match ? match[1] : null;
 };
 
 /**
- * Remove os tokens do localStorage
+ * Inicializa o token CSRF fazendo requisição ao backend
  */
-const clearTokens = () => {
-  localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-  localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-  localStorage.removeItem(STORAGE_KEYS.USER);
-  localStorage.removeItem(STORAGE_KEYS.SELECTED_CHILD);
+const inicializarCsrf = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/csrf-token`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+    
+    if (!response.ok) {
+      throw new Error('Falha ao obter token CSRF');
+    }
+    
+    return true;
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Erro ao inicializar CSRF:', error);
+    }
+    return false;
+  }
 };
 
+// ===========================================
+// GERENCIAMENTO DE USUÁRIO (localStorage seguro)
+// ===========================================
+
 /**
- * Salva dados do usuário no localStorage
+ * Salva dados do usuário no localStorage (dados não-sensíveis)
  */
 const saveUser = (user) => {
-  localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+  if (user) {
+    // Remove dados sensíveis antes de salvar
+    const userSeguro = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    };
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userSeguro));
+  } else {
+    localStorage.removeItem(STORAGE_KEYS.USER);
+  }
 };
 
 /**
  * Obtém dados do usuário do localStorage
  */
 const getUser = () => {
-  const user = localStorage.getItem(STORAGE_KEYS.USER);
-  return user ? JSON.parse(user) : null;
+  try {
+    const user = localStorage.getItem(STORAGE_KEYS.USER);
+    return user ? JSON.parse(user) : null;
+  } catch {
+    return null;
+  }
 };
 
 /**
@@ -70,13 +93,26 @@ const saveSelectedChild = (child) => {
  * Obtém a criança selecionada
  */
 const getSelectedChild = () => {
-  const child = localStorage.getItem(STORAGE_KEYS.SELECTED_CHILD);
-  return child ? JSON.parse(child) : null;
+  try {
+    const child = localStorage.getItem(STORAGE_KEYS.SELECTED_CHILD);
+    return child ? JSON.parse(child) : null;
+  } catch {
+    return null;
+  }
 };
 
 /**
- * Função para renovar o token automaticamente
+ * Limpa todos os dados do localStorage
  */
+const clearLocalData = () => {
+  localStorage.removeItem(STORAGE_KEYS.USER);
+  localStorage.removeItem(STORAGE_KEYS.SELECTED_CHILD);
+};
+
+// ===========================================
+// CONTROLE DE REFRESH TOKEN
+// ===========================================
+
 let isRefreshing = false;
 let refreshSubscribers = [];
 
@@ -84,38 +120,44 @@ const subscribeTokenRefresh = (callback) => {
   refreshSubscribers.push(callback);
 };
 
-const onTokenRefreshed = (newToken) => {
-  refreshSubscribers.forEach(callback => callback(newToken));
+const onTokenRefreshed = () => {
+  refreshSubscribers.forEach(callback => callback());
   refreshSubscribers = [];
 };
 
-const refreshAccessToken = async () => {
-  const refreshToken = getRefreshToken();
-  
-  if (!refreshToken) {
-    throw new Error('Sem refresh token disponível');
-  }
+const onRefreshFailed = (error) => {
+  refreshSubscribers.forEach(callback => callback(error));
+  refreshSubscribers = [];
+};
 
+/**
+ * Tenta renovar o token de acesso via cookies
+ */
+const refreshAccessToken = async () => {
   const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
     method: 'POST',
+    credentials: 'include',
     headers: {
-      'Authorization': `Bearer ${refreshToken}`,
       'Content-Type': 'application/json',
+      'X-CSRF-Token': getCsrfToken() || '',
     },
   });
 
   if (!response.ok) {
-    clearTokens();
+    clearLocalData();
     throw new Error('Sessão expirada. Faça login novamente.');
   }
 
-  const data = await response.json();
-  saveTokens(data.access_token, null);
-  return data.access_token;
+  return true;
 };
+
+// ===========================================
+// FUNÇÃO PRINCIPAL DE REQUISIÇÕES
+// ===========================================
 
 /**
  * Função principal para fazer requisições à API
+ * Agora usa cookies httpOnly para autenticação
  */
 const apiRequest = async (endpoint, options = {}) => {
   const {
@@ -123,6 +165,7 @@ const apiRequest = async (endpoint, options = {}) => {
     body = null,
     authenticated = false,
     isFormData = false,
+    skipCsrf = false,
   } = options;
 
   const headers = {};
@@ -131,16 +174,18 @@ const apiRequest = async (endpoint, options = {}) => {
     headers['Content-Type'] = 'application/json';
   }
 
-  if (authenticated) {
-    const token = getAccessToken();
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+  // Adiciona CSRF token para métodos que modificam dados
+  if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(method.toUpperCase()) && !skipCsrf) {
+    const csrfToken = getCsrfToken();
+    if (csrfToken) {
+      headers['X-CSRF-Token'] = csrfToken;
     }
   }
 
   const config = {
     method,
     headers,
+    credentials: 'include', // IMPORTANTE: Sempre enviar cookies
   };
 
   if (body) {
@@ -150,33 +195,42 @@ const apiRequest = async (endpoint, options = {}) => {
   try {
     let response = await fetch(`${API_BASE_URL}${endpoint}`, config);
 
-    // Se o token expirou (401), tenta renovar
+    // Se o token expirou (401) e é requisição autenticada, tenta renovar
     if (response.status === 401 && authenticated) {
       if (!isRefreshing) {
         isRefreshing = true;
         
         try {
-          const newToken = await refreshAccessToken();
+          await refreshAccessToken();
           isRefreshing = false;
-          onTokenRefreshed(newToken);
+          onTokenRefreshed();
           
-          // Refaz a requisição com o novo token
-          headers['Authorization'] = `Bearer ${newToken}`;
-          config.headers = headers;
+          // Refaz a requisição original
           response = await fetch(`${API_BASE_URL}${endpoint}`, config);
         } catch (refreshError) {
           isRefreshing = false;
-          clearTokens();
+          onRefreshFailed(refreshError);
+          clearLocalData();
           throw refreshError;
         }
       } else {
-        // Espera o token ser renovado
-        return new Promise((resolve) => {
-          subscribeTokenRefresh(async (newToken) => {
-            headers['Authorization'] = `Bearer ${newToken}`;
-            config.headers = headers;
-            const retryResponse = await fetch(`${API_BASE_URL}${endpoint}`, config);
-            resolve(retryResponse.json());
+        // Espera o refresh terminar e tenta novamente
+        return new Promise((resolve, reject) => {
+          subscribeTokenRefresh(async (error) => {
+            if (error) {
+              reject(error);
+              return;
+            }
+            try {
+              const retryResponse = await fetch(`${API_BASE_URL}${endpoint}`, config);
+              const data = await retryResponse.json();
+              if (!retryResponse.ok) {
+                throw new Error(data.error || data.message || `Erro ${retryResponse.status}`);
+              }
+              resolve(data);
+            } catch (retryError) {
+              reject(retryError);
+            }
           });
         });
       }
@@ -190,50 +244,66 @@ const apiRequest = async (endpoint, options = {}) => {
 
     return data;
   } catch (error) {
-    console.error(`Erro na requisição ${endpoint}:`, error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error(`Erro na requisição ${endpoint}:`, error);
+    }
     throw error;
   }
 };
 
-// Função para verificar saúde da API
+// ===========================================
+// FUNÇÕES UTILITÁRIAS
+// ===========================================
+
+/**
+ * Verifica saúde da API
+ */
 const verificarSaude = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/health`);
+    const response = await fetch(`${API_BASE_URL}/health`, {
+      credentials: 'include',
+    });
     return response.ok;
   } catch (error) {
     return false;
   }
 };
 
-// Função para verificar se usuário está autenticado
-const estaAutenticado = () => {
-  const token = getAccessToken();
-  return !!token;
-};
-
-// Função para obter dados do usuário atual
-const obterUsuarioAtual = async () => {
+/**
+ * Verifica se o usuário está autenticado consultando o backend
+ */
+const verificarAutenticacao = async () => {
   try {
-    return await apiRequest('/auth/me');
+    const data = await apiRequest('/auth/me', {
+      method: 'GET',
+      authenticated: true,
+    });
+    return data.success ? data.user : null;
   } catch (error) {
-    console.error('Erro ao obter usuário:', error);
     return null;
   }
+};
+
+/**
+ * Verifica se há dados de usuário no cache local
+ * (Não significa que está autenticado, apenas que tem cache)
+ */
+const temCacheUsuario = () => {
+  return !!getUser();
 };
 
 export {
   API_BASE_URL,
   STORAGE_KEYS,
   apiRequest,
-  getAccessToken,
-  getRefreshToken,
-  saveTokens,
-  clearTokens,
+  inicializarCsrf,
+  getCsrfToken,
   saveUser,
   getUser,
   saveSelectedChild,
   getSelectedChild,
+  clearLocalData,
   verificarSaude,
-  estaAutenticado,
-  obterUsuarioAtual,
+  verificarAutenticacao,
+  temCacheUsuario,
 };

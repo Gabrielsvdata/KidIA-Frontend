@@ -1,0 +1,114 @@
+// ===========================================
+// KIDIA - ESTILOS DO COMPONENTE TOAST
+// ===========================================
+
+@import '../../styles/variables';
+
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  max-width: 400px;
+  width: calc(100% - 40px);
+
+  @media (max-width: 480px) {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+    max-width: none;
+  }
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: 14px $spacing-md;
+  border-radius: $border-radius-medium;
+  background: white;
+  box-shadow: $shadow-medium;
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  line-height: 1.4;
+  border-left: 4px solid;
+
+  &--sucesso {
+    border-left-color: $color-success;
+    background: linear-gradient(135deg, rgba($color-success, 0.08) 0%, white 100%);
+
+    .toast__icone {
+      color: $color-success;
+    }
+  }
+
+  &--erro {
+    border-left-color: $color-error;
+    background: linear-gradient(135deg, rgba($color-error, 0.08) 0%, white 100%);
+
+    .toast__icone {
+      color: $color-error;
+    }
+  }
+
+  &--info {
+    border-left-color: $color-info;
+    background: linear-gradient(135deg, rgba($color-info, 0.08) 0%, white 100%);
+
+    .toast__icone {
+      color: $color-info;
+    }
+  }
+
+  &--aviso {
+    border-left-color: $color-warning;
+    background: linear-gradient(135deg, rgba($color-warning, 0.08) 0%, white 100%);
+
+    .toast__icone {
+      color: $color-warning;
+    }
+  }
+
+  &__icone {
+    flex-shrink: 0;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__mensagem {
+    flex: 1;
+    color: $text-primary;
+    font-weight: 500;
+  }
+
+  &__fechar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: $text-secondary;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.1);
+      color: $text-primary;
+    }
+
+    svg {
+      font-size: 16px;
+    }
+  }
+}

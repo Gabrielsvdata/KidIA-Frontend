@@ -1,11 +1,16 @@
 // ===========================================
-// KIDIA - CONTEXTO DE AUTENTICAÇÃO
+// KIDIA - CONTEXTO DE AUTENTICAÇÃO (COOKIES httpOnly)
 // ===========================================
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import autenticacaoService from '../servicos/autenticacao';
 import criancasService from '../servicos/criancas';
-import { estaAutenticado, getUser, clearTokens } from '../servicos/api';
+import { 
+  inicializarCsrf, 
+  verificarAutenticacao, 
+  clearLocalData,
+  saveUser 
+} from '../servicos/api';
 
 const AutenticacaoContexto = createContext(null);
 
@@ -15,30 +20,51 @@ export const AutenticacaoProvider = ({ children }) => {
   const [criancaSelecionada, setCriancaSelecionada] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [autenticado, setAutenticado] = useState(false);
+  const [csrfPronto, setCsrfPronto] = useState(false);
 
-  // Verifica autenticação inicial
+  // Inicialização: CSRF primeiro, depois verificação de autenticação
   useEffect(() => {
-    const verificarAutenticacao = async () => {
+    const inicializar = async () => {
       try {
-        if (estaAutenticado()) {
-          const usuarioSalvo = getUser();
-          setUsuario(usuarioSalvo);
+        // 1. Inicializa CSRF token
+        await inicializarCsrf();
+        setCsrfPronto(true);
+        
+        // 2. Verifica se está autenticado consultando o backend
+        const usuarioAutenticado = await verificarAutenticacao();
+        
+        if (usuarioAutenticado) {
+          setUsuario(usuarioAutenticado);
           setAutenticado(true);
+          saveUser(usuarioAutenticado);
           
-          // Carrega crianças
-          const listaCriancas = await criancasService.listarCriancas();
-          setCriancas(listaCriancas);
+          // 3. Carrega crianças
+          try {
+            const listaCriancas = await criancasService.listarCriancas();
+            setCriancas(listaCriancas);
+          } catch (err) {
+            if (process.env.NODE_ENV === 'development') {
+              console.error('Erro ao carregar crianças:', err);
+            }
+          }
           
-          // Verifica se há criança selecionada
+          // 4. Verifica se há criança selecionada no cache
           const criancaAtual = criancasService.obterCriancaSelecionada();
           if (criancaAtual) {
             setCriancaSelecionada(criancaAtual);
           }
+        } else {
+          // Não autenticado - limpa dados locais
+          clearLocalData();
+          setAutenticado(false);
+          setUsuario(null);
         }
       } catch (error) {
-        console.error('Erro ao verificar autenticação:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Erro ao inicializar autenticação:', error);
+        }
         // Se der erro, limpa tudo
-        clearTokens();
+        clearLocalData();
         setAutenticado(false);
         setUsuario(null);
       } finally {
@@ -46,7 +72,7 @@ export const AutenticacaoProvider = ({ children }) => {
       }
     };
 
-    verificarAutenticacao();
+    inicializar();
   }, []);
 
   // Login
@@ -60,8 +86,14 @@ export const AutenticacaoProvider = ({ children }) => {
         setAutenticado(true);
         
         // Carrega crianças após login
-        const listaCriancas = await criancasService.listarCriancas();
-        setCriancas(listaCriancas);
+        try {
+          const listaCriancas = await criancasService.listarCriancas();
+          setCriancas(listaCriancas);
+        } catch (err) {
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Erro ao carregar crianças após login:', err);
+          }
+        }
       }
       
       return resultado;
@@ -85,13 +117,18 @@ export const AutenticacaoProvider = ({ children }) => {
     }
   }, []);
 
-  // Logout
-  const logout = useCallback(() => {
-    autenticacaoService.logout();
-    setUsuario(null);
-    setCriancas([]);
-    setCriancaSelecionada(null);
-    setAutenticado(false);
+  // Logout - agora é async pois chama o backend
+  const logout = useCallback(async () => {
+    setCarregando(true);
+    try {
+      await autenticacaoService.logout();
+    } finally {
+      setUsuario(null);
+      setCriancas([]);
+      setCriancaSelecionada(null);
+      setAutenticado(false);
+      setCarregando(false);
+    }
   }, []);
 
   // Adicionar criança
@@ -123,7 +160,32 @@ export const AutenticacaoProvider = ({ children }) => {
       const listaCriancas = await criancasService.listarCriancas();
       setCriancas(listaCriancas);
     } catch (error) {
-      console.error('Erro ao atualizar crianças:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Erro ao atualizar crianças:', error);
+      }
+    }
+  }, []);
+
+  // Revalidar sessão (útil para verificar se ainda está logado)
+  const revalidarSessao = useCallback(async () => {
+    try {
+      const usuarioAtual = await verificarAutenticacao();
+      if (usuarioAtual) {
+        setUsuario(usuarioAtual);
+        setAutenticado(true);
+        saveUser(usuarioAtual);
+        return true;
+      } else {
+        clearLocalData();
+        setAutenticado(false);
+        setUsuario(null);
+        return false;
+      }
+    } catch (error) {
+      clearLocalData();
+      setAutenticado(false);
+      setUsuario(null);
+      return false;
     }
   }, []);
 
@@ -134,6 +196,7 @@ export const AutenticacaoProvider = ({ children }) => {
     criancaSelecionada,
     carregando,
     autenticado,
+    csrfPronto,
     
     // Ações
     login,
@@ -143,6 +206,7 @@ export const AutenticacaoProvider = ({ children }) => {
     selecionarCrianca,
     limparSelecaoCrianca,
     atualizarCriancas,
+    revalidarSessao,
     
     // Helpers
     obterAvatares: criancasService.obterAvatares,

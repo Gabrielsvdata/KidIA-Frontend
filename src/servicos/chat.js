@@ -107,7 +107,9 @@ const chatService = {
     } catch (error) {
       // Se falhar autenticada, tenta rápida como fallback
       if (estaAutenticado) {
-        console.warn('Falha na mensagem autenticada, tentando modo rápido...');
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('Falha na mensagem autenticada, tentando modo rápido...');
+        }
         try {
           return await this.enviarMensagemRapida(mensagem);
         } catch (fallbackError) {

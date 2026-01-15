@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AutenticacaoProvider, useAutenticacao } from './contextos/AutenticacaoContexto';
+import { ToastProvider } from './componentes/Toast/Toast';
 import TelaInicial from './componentes/TelaInicial/TelaInicial';
 import TelaChat from './componentes/TelaChat/TelaChat';
 import TelaAutenticacao from './componentes/TelaAutenticacao/TelaAutenticacao';
@@ -159,7 +160,9 @@ const AppContent = () => {
 function App() {
   return (
     <AutenticacaoProvider>
-      <AppContent />
+      <ToastProvider>
+        <AppContent />
+      </ToastProvider>
     </AutenticacaoProvider>
   );
 }

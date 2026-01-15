@@ -6,10 +6,16 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import PersonagemPixel from '../PersonagemPixel/PersonagemPixel';
 import { useAutenticacao } from '../../contextos/AutenticacaoContexto';
+import { useToast } from '../Toast/Toast';
+import { useRateLimiter } from '../../hooks/useRateLimiter';
+import { sanitizarTexto, limitarTamanho } from '../../utils/seguranca';
 import './TelaAutenticacao.scss';
 
 const TelaAutenticacao = ({ aoSucesso, aoPular }) => {
   const { login, registrar, carregando } = useAutenticacao();
+  const toast = useToast();
+  // Rate limiter: 1s entre tentativas, máx 5 tentativas, reset após 60s
+  const rateLimiter = useRateLimiter(1000, 5, 60000);
   const [modo, setModo] = useState('login'); // 'login' ou 'registro'
   const [formData, setFormData] = useState({
     nome: '',
@@ -22,7 +28,11 @@ const TelaAutenticacao = ({ aoSucesso, aoPular }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    // Sanitiza e limita tamanho da entrada
+    const valorSeguro = name === 'senha' || name === 'confirmarSenha' 
+      ? limitarTamanho(value, 128) // Senhas podem ter caracteres especiais
+      : limitarTamanho(sanitizarTexto(value), 100);
+    setFormData(prev => ({ ...prev, [name]: valorSeguro }));
     setErro('');
   };
 
@@ -31,27 +41,58 @@ const TelaAutenticacao = ({ aoSucesso, aoPular }) => {
     setErro('');
     setSucesso('');
 
+    // Verifica rate limiting
+    if (rateLimiter.bloqueado) {
+      toast.erro(`Muitas tentativas. Aguarde ${rateLimiter.tempoRestante}s`);
+      return;
+    }
+
+    if (!rateLimiter.verificarPermissao()) {
+      toast.aviso('Aguarde um momento antes de tentar novamente');
+      return;
+    }
+
+    // Registra tentativa
+    rateLimiter.registrarTentativa();
+
     try {
       if (modo === 'registro') {
         // Validações de registro
         if (formData.senha !== formData.confirmarSenha) {
+          toast.erro('As senhas não coincidem');
           setErro('As senhas não coincidem');
           return;
         }
 
-        await registrar(formData.nome, formData.email, formData.senha);
+        const resultado = await registrar(formData.nome, formData.email, formData.senha);
+        
+        // Exibe toast de sucesso com mensagem da API
+        const mensagemSucesso = resultado?.message || 'Cadastro realizado com sucesso!';
+        toast.sucesso(mensagemSucesso);
         setSucesso('Conta criada com sucesso! Faça login para continuar.');
         setModo('login');
         setFormData(prev => ({ ...prev, senha: '', confirmarSenha: '' }));
+        rateLimiter.resetar(); // Reseta rate limiter após sucesso
       } else {
         // Login
         const resultado = await login(formData.email, formData.senha);
         if (resultado.success) {
-          aoSucesso && aoSucesso();
+          // Exibe toast de sucesso com mensagem da API
+          const mensagemSucesso = resultado?.message || 'Login realizado com sucesso!';
+          toast.sucesso(mensagemSucesso);
+          rateLimiter.resetar(); // Reseta rate limiter após sucesso
+          
+          // Pequeno delay para o usuário ver o toast antes de redirecionar
+          setTimeout(() => {
+            aoSucesso && aoSucesso();
+          }, 800);
         }
       }
     } catch (error) {
-      setErro(error.message || 'Ocorreu um erro. Tente novamente.');
+      // Exibe toast de erro com mensagem da API
+      const mensagemErro = error.message || 'Ocorreu um erro. Tente novamente.';
+      toast.erro(mensagemErro);
+      setErro(mensagemErro);
     }
   };
 
@@ -59,6 +100,7 @@ const TelaAutenticacao = ({ aoSucesso, aoPular }) => {
     setModo(modo === 'login' ? 'registro' : 'login');
     setErro('');
     setSucesso('');
+    rateLimiter.resetar(); // Reseta rate limiter ao trocar de modo
     setFormData({
       nome: '',
       email: '',
@@ -219,12 +261,18 @@ const TelaAutenticacao = ({ aoSucesso, aoPular }) => {
 
           <motion.button
             type="submit"
-            className="tela-autenticacao__botao-principal"
-            disabled={carregando}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            className={`tela-autenticacao__botao-principal ${rateLimiter.bloqueado ? 'tela-autenticacao__botao-principal--bloqueado' : ''}`}
+            disabled={carregando || rateLimiter.bloqueado}
+            whileHover={{ scale: carregando || rateLimiter.bloqueado ? 1 : 1.02 }}
+            whileTap={{ scale: carregando || rateLimiter.bloqueado ? 1 : 0.98 }}
           >
-            {carregando ? 'Aguarde...' : modo === 'login' ? 'Entrar' : 'Criar Conta'}
+            {carregando 
+              ? 'Aguarde...' 
+              : rateLimiter.bloqueado 
+                ? `Bloqueado (${rateLimiter.tempoRestante}s)`
+                : modo === 'login' 
+                  ? 'Entrar' 
+                  : 'Criar Conta'}
           </motion.button>
         </motion.form>
 
